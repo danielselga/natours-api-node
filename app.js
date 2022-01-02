@@ -7,8 +7,7 @@ const app = express();
 
 app.use(express.json());
 
-// Creating a middleware
-
+// Third party middleware
 app.use(morgan('dev'));
 
 app.use((req, res, next) => {
