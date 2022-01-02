@@ -41,7 +41,7 @@ const getAlltours = (req, res) => {
 };
 
 const getTour = (req, res) => {
-  console.log(req.params);
+  console.log(req.params , 'req params');
 
   const id = Number(req.params.id);
   const tour = tours.find((el) => el.id === id);
@@ -110,42 +110,74 @@ const deleteTour = (req, res) => {
   });
 };
 
-// Reqs end points
+const getAllUsers = (req, res) => {
+    res.status(500).json({
+        status: 'error',
+        message: 'This route is not yet defined'
+    })
+}
 
-// app.get('/api/v1/tours', getAlltours)
-// app.post('/api/v1/tours', createTour)
-// app.get('/api/v1/tours/:id/', getTour)
-// app.patch('/api/v1/tours/:id', patchTour)
-// app.delete('/api/v1/tours/:id', deleteTour)
+const getUser = (req, res) => {
+    res.status(500).json({
+        status: 'error',
+        message: 'This route is not yet defined'
+    })
+}
 
-//Chaining request methods
+const createUser = (req, res) => {
+    res.status(500).json({
+        status: 'error',
+        message: 'This route is not yet defined'
+    })
+}
+
+const updateUser = (req, res) => {
+    res.status(500).json({
+        status: 'error',
+        message: 'This route is not yet defined'
+    })
+}
+
+const deleteUser = (req, res) => {
+    res.status(500).json({
+        status: 'error',
+        message: 'This route is not yet defined'
+    })
+}
 
 // Routes
 
-app.route('/api/v1/tours').get(getAlltours).post(createTour);
+// Tour Routes
+const tourRoutes = express.Router() // Router class from express used to organize the routes middlewares
 
-// Aqui o middleware não irá disparar caso alguns desses metodos "ACIMA" forem chamados pois ele foi invocado depois.
+tourRoutes
+.route('/')
+.get(getAlltours)
+.post(createTour);
 
-// app.use((req, res, next) => { // Will apply to all req
-//     console.log('Hello from the middleware')
-//     next(); // Next needed to be caled in the end of the midleware
-// })
+tourRoutes
+.route('/:id')
+.get(getTour)
+.patch(patchTour)
+.delete(deleteTour);
 
-app
-  .route('/api/v1/tours/:id/')
-  .get(getTour)
-  .patch(patchTour)
-  .delete(deleteTour);
+// User routes
+const userRouters = express.Router()
 
-// Caso alguns desses metodos que foram invocados depois do middleware for chamado ele vai ser disparado.
+userRouters
+.route('/')
+.get(getAllUsers)
+.post(createUser);
 
-app.route('/api/v1/users').get(getAllUsers).post(createUser);
+userRouters
+.route('/:id')
+.get(getUser)
+.patch(updateUser)
+.delete(deleteUser);
 
-app
-  .route('/api/v1/users/:id')
-  .get(getUser)
-  .patch(updateUser)
-  .delete(deleteUser);
+// Using the routers
+app.use('/api/v1/tours', tourRoutes)
+app.use('/api/v1/users', userRouters)
 
 // Opening the server
 const port = 3000;
