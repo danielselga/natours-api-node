@@ -2,15 +2,18 @@ const express = require('express');
 const morgan = require('morgan');
 const userRouter = require('./routes/userRoutes');
 const tourRoutes = require('./routes/tourRoutes');
-const openServer = require('./server')
 
 const app = express();
 
 app.use(express.json());
 
-// Middlewares
-// Third party middleware
-app.use(morgan('dev'));
+// Morgan only on with enviroment variable
+console.log(process.env.NODE_ENV)
+if(process.env.NODE_ENV === 'development') {
+  console.log('Morgan on')
+  app.use(morgan('dev'));
+}
+
 
 app.use(express.static(`${__dirname}/public`))
 
