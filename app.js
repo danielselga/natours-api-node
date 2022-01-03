@@ -8,8 +8,11 @@ const app = express();
 
 app.use(express.json());
 
+// Middlewares
 // Third party middleware
 app.use(morgan('dev'));
+
+app.use(express.static(`${__dirname}/public`))
 
 app.use((req, res, next) => {
   // Will apply to all req
