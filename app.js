@@ -8,7 +8,6 @@ const app = express();
 app.use(express.json());
 
 // Morgan only on with enviroment variable
-console.log(process.env.NODE_ENV)
 if(process.env.NODE_ENV === 'development') {
   console.log('Morgan on')
   app.use(morgan('dev'));

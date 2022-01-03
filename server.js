@@ -1,9 +1,28 @@
-const dotEnv = require('dotenv')
+const mongoose = require('mongoose');
+const dotEnv = require('dotenv');
 dotEnv.config({
-  path: './config.env'
-})
+  path: './config.env',
+});
+const app = require('./app');
 
-const app = require('./app')
+const DB = process.env.DB_URI.replace(
+  '<PASSWORD>',
+  process.env.DATABASE_PASSWORD
+);
+
+try {
+  mongoose.connect(DB, {
+    useNewUrlParser: true,
+  }).then(con => {
+    console.log('DB Connection Successfull')
+  })
+} catch (err) {
+  console.err(err);
+}
+
+mongoose.connection.on('error', err => {
+  logError(err);
+});
 
 // Opening the server
 app.listen(process.env.PORT, () => {
