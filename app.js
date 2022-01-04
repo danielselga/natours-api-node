@@ -2,17 +2,13 @@ const express = require('express');
 const morgan = require('morgan');
 const userRouter = require('./routes/userRoutes');
 const tourRoutes = require('./routes/tourRoutes');
-
 const app = express();
-
-app.use(express.json());
 
 // Morgan only on with enviroment variable
 if(process.env.NODE_ENV === 'development') {
   console.log('Morgan on')
   app.use(morgan('dev'));
 }
-
 
 app.use(express.static(`${__dirname}/public`))
 

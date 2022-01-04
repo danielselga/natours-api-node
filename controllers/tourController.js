@@ -78,11 +78,18 @@ exports.patchTour = (req, res) => {
   });
 };
 
-exports.deleteTour = (req, res) => {
-  res.status(204).json({
-    status: 'success',
-    data: null,
-  });
+exports.deleteTour = async (req, res) => {
+  try {
+    res.status(204).json({
+      status: 'success',
+      data: null,
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 'Fail',
+      message: 'Invalid Data Send!'
+    }) 
+  }
 };
 
 module.exports;
