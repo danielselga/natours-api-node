@@ -5,7 +5,7 @@ dotEnv.config({
 });
 const app = require('./app');
 
-console.log(process.env)
+// console.log(process.env)
 
 const DB = process.env.DB_URI.replace(
   '<PASSWORD>',
@@ -13,16 +13,18 @@ const DB = process.env.DB_URI.replace(
 );
 
 try {
-  mongoose.connect(DB, {
-    useNewUrlParser: true,
-  }).then(con => {
-    console.log('DB Connection Successfull')
-  })
+  mongoose
+    .connect(DB, {
+      useNewUrlParser: true,
+    })
+    .then((con) => {
+      console.log('DB Connection Successfull');
+    });
 } catch (err) {
   console.err(err);
 }
 
-mongoose.connection.on('error', err => {
+mongoose.connection.on('error', (err) => {
   logError(err);
 });
 
