@@ -10,9 +10,8 @@ if(process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
-// Parsing the body requisitions
-app.use(express.json()); // Extreme important
-
+// Middlewares to Parsing the requisitions body
+app.use(express.json()); // Extreme important to post and patch methods
 
 app.use(express.static(`${__dirname}/public`))
 
