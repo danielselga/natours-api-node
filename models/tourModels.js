@@ -6,7 +6,7 @@ const tourSchema = new mongoose.Schema({
     required: [true, 'A tour must have a name!'],
     unique: true,
   },
-  durations: {
+  duration: {
     type: Number,
     required: [true, 'A tour must have a duration'],
   },
@@ -18,23 +18,40 @@ const tourSchema = new mongoose.Schema({
     type: String,
     required: [true, 'A tour must have a dificulty']
   },
-  rating: {
+  ratingsAvg: {
     type: Number,
     default: 4.5,
+  },
+  ratingsQuantity: {
+    type: Number,
+    default: 0
   },
   price: {
     type: Number,
     required: [true, 'A tour must have a price'],
   },
+  priceDiscount: Number,
+  summary: {
+    type: String,
+    trim: true, // Remove all the white spaces in the beginning and the end
+    require: [true, 'A tour must have a description']
+  },
+  description: {
+    type: String,
+    trim: true
+  },
+  imageCover: {
+    type: String,
+    required: [true, 'A tour must have a cover image']
+  },
+  images: [String], // Array of strings
+  createdAt: {
+    type: Date, // Adding date automaticaly
+    default: Date.now()
+  },
+  startDates: [Date], // Array of date
 });
 
 const Tour = mongoose.model('Tour', tourSchema);
-
-// const testTour = new Tour({
-//   name: 'The Park Camper',
-//   price: 997,
-// });
-
-// testTour.save()
 
 module.exports = Tour;
