@@ -16,6 +16,8 @@ exports.getAlltours = async (req, res) => {
     //   difficulty: 'easy'
     // })
 
+    const queryObj = {...req.query} // Creating a NEW object copy of an object (not referenced)
+
     const tours = await Tour.find(req.query)
 
     // Querying using methods (mongoose methods)
@@ -27,6 +29,7 @@ exports.getAlltours = async (req, res) => {
 
     res.status(200).json({
       status: 'success',
+      results: tours.length,
       requestedAt: req.requestTime,
       data: {
         tours,
