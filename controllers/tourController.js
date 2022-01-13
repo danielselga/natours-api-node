@@ -17,6 +17,8 @@ exports.getAlltours = async (req, res) => {
     // })
 
     const queryObj = {...req.query} // Creating a NEW object copy of an object (not referenced)
+    const excludeFields = ['page', 'sort', 'limit', 'fields']
+    excludeFields.forEach(el => delete queryObj[el])
 
     const tours = await Tour.find(req.query)
 
