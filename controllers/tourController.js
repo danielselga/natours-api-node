@@ -16,12 +16,14 @@ exports.getAlltours = async (req, res) => {
     //   difficulty: 'easy'
     // })
 
+    const tours = await Tour.find(req.query)
+
     // Querying using methods (mongoose methods)
-    const tours = await Tour.find()
-      .where('duration')
-      .equals(5)
-      .where('difficulty')
-      .equals('easy'); // We can have lte(), lt()...
+    // const tours = await Tour.find()
+    //   .where('duration')
+    //   .equals(5)
+    //   .where('difficulty')
+    //   .equals('easy'); // We can have lte(), lt()...
 
     res.status(200).json({
       status: 'success',
