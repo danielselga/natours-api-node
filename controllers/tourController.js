@@ -16,18 +16,22 @@ exports.getAlltours = async (req, res) => {
     //   difficulty: 'easy'
     // })
 
-    const queryObj = {...req.query} // Creating a NEW object copy of an object (not referenced)
-    const excludeFields = ['page', 'sort', 'limit', 'fields']
-    excludeFields.forEach(el => delete queryObj[el])
-
-    const tours = await Tour.find(req.query)
-
     // Querying using methods (mongoose methods)
-    // const tours = await Tour.find()
+    // const query = await Tour.find()
     //   .where('duration')
     //   .equals(5)
     //   .where('difficulty')
     //   .equals('easy'); // We can have lte(), lt()...
+    
+    // Bluild the query
+    const queryObj = {...req.query} // Creating a NEW object copy of an object (not referenced)
+    const excludeFields = ['page', 'sort', 'limit', 'fields']
+    excludeFields.forEach(el => delete queryObj[el])
+    
+    const query = await Tour.find(queryObj)
+  
+    // Execute the query
+    const tours = await query
 
     res.status(200).json({
       status: 'success',
