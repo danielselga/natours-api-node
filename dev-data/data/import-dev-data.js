@@ -7,7 +7,7 @@ dotEnv.config({
   path: './config.env',
 });
 
-console.log(process.env.DB_URI)
+console.log(process.env)
 
 const DB = process.env.DB_URI.replace(
   '<PASSWORD>',
