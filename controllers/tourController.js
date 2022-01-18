@@ -24,11 +24,20 @@ exports.getAlltours = async (req, res) => {
     //   .equals('easy'); // We can have lte(), lt()...
     
     // Bluild the query
+    // 1) Filtering
     const queryObj = {...req.query} // Creating a NEW object copy of an object (not referenced)
     const excludeFields = ['page', 'sort', 'limit', 'fields']
     excludeFields.forEach(el => delete queryObj[el])
+
+    // 2) Avanced filtering
+    let queryStr = JSON.stringify(queryObj)
+    queryStr = queryStr.replace(/(\bgte\b|\blt\b|\bgt\b|\blte\b)/g, match => `$${match}`)
+
+    // {difficulty: 'easy', duration: {$gte: 5}}
+    // {difficulty: 'easy', duration: {gte: 5}}
+    // gte, gt, lte, lt
     
-    const query = await Tour.find(queryObj)
+    const query = await Tour.find( JSON.parse(queryStr))
   
     // Execute the query
     const tours = await query
@@ -42,6 +51,7 @@ exports.getAlltours = async (req, res) => {
       },
     });
   } catch (err) {
+    console.log(err)
     res.status(400).json({
       status: 'fail',
       message: err,
