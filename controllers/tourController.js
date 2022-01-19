@@ -47,6 +47,8 @@ exports.getAlltours = async (req, res) => {
       const sortBy = req.query.sort.split(',').join(' ')
       query = query.sort(sortBy)
       // Sort('price ratingAverage') // To add a second or criteria add in the same string separated by space the critereas.
+    } else {
+      query = query.sort('-createdAt') // Sorting by newest frist *nuts
     }
      
   
