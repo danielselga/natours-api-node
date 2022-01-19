@@ -6,6 +6,13 @@ const Tour = require('../models/tourModels');
 //   fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`)
 // ); //JSON.parse get a json and return a JS Object
 
+exports.aliasTopTours = (req, res, next) => {
+  req.query.limit = '5'
+  req.query.sort = '-ratingsAverage,price'
+  req.query.fields = 'name,price,ratingsAverage,sumary,difficulty'
+  next()
+}
+
 exports.getAlltours = async (req, res) => {
   try {
     console.log(req.query);
