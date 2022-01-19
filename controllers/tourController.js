@@ -53,13 +53,27 @@ exports.getAlltours = async (req, res) => {
       query = query.sort('-createdAt'); // Sorting by newest frist *nuts
     }
 
-    // Field limiting (Send only request data)
+    // 3) Field limiting (Send only request data)
     if (req.query.fields) {
       console.log(req.query.fields)
       const fields = req.query.fields.split(',').join(' ');
       query = query.select(fields); // Includes this fields to the response
     } else {
       query = query.select('-__v'); // Exclude this fields to the response
+    }
+
+    // 4) Pagination
+    const page = req.query.page * 1 || 1 // Convert str to num
+    const limit = req.query.limit * 1 || 100
+    const skip = (page - 1) * limit
+    // page=2&limit=10, 1-10, page 1, 11-20, page 2, 21-30 page 3
+    query.skip(skip).limit(limit)
+
+    if (req.query.page) { // Checking if the size of documents ir bigger then the skip
+      const numTours = await Tour.countDocuments(page)
+      if (skip > numTours) {
+        throw new Error('This page does not exist')
+      }
     }
 
     // Execute the query
