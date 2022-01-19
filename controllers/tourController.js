@@ -22,38 +22,48 @@ exports.getAlltours = async (req, res) => {
     //   .equals(5)
     //   .where('difficulty')
     //   .equals('easy'); // We can have lte(), lt()...
-    
+
     // Bluild the query
     // 1A) Filtering
-    const queryObj = {...req.query} // Creating a NEW object copy of an object (not referenced)
-    const excludeFields = ['page', 'sort', 'limit', 'fields']
-    excludeFields.forEach(el => delete queryObj[el])
+    const queryObj = { ...req.query }; // Creating a NEW object copy of an object (not referenced)
+    const excludeFields = ['page', 'sort', 'limit', 'fields'];
+    excludeFields.forEach((el) => delete queryObj[el]);
 
     // 2B) Avanced filtering
-    let queryStr = JSON.stringify(queryObj)
-    queryStr = queryStr.replace(/(\bgte\b|\blt\b|\bgt\b|\blte\b)/g, match => `$${match}`)
+    let queryStr = JSON.stringify(queryObj);
+    queryStr = queryStr.replace(
+      /(\bgte\b|\blt\b|\bgt\b|\blte\b)/g,
+      (match) => `$${match}`
+    );
 
     // {difficulty: 'easy', duration: {$gte: 5}}
     // {difficulty: 'easy', duration: {gte: 5}}
     // gte, gt, lte, lt
-    
-    let query = Tour.find(JSON.parse(queryStr))
-    
+
+    let query = Tour.find(JSON.parse(queryStr));
+
     // console.log(req.query.sort , 'req')
 
     // 2) Sorting
-    if(req.query.sort) {
-      console.log('if')
-      const sortBy = req.query.sort.split(',').join(' ')
-      query = query.sort(sortBy)
+    if (req.query.sort) {
+      const sortBy = req.query.sort.split(',').join(' ');
+      query = query.sort(sortBy);
       // Sort('price ratingAverage') // To add a second or criteria add in the same string separated by space the critereas.
     } else {
-      query = query.sort('-createdAt') // Sorting by newest frist *nuts
+      query = query.sort('-createdAt'); // Sorting by newest frist *nuts
     }
-     
-  
+
+    // Field limiting (Send only request data)
+    if (req.query.fields) {
+      console.log(req.query.fields)
+      const fields = req.query.fields.split(',').join(' ');
+      query = query.select(fields); // Includes this fields to the response
+    } else {
+      query = query.select('-__v'); // Exclude this fields to the response
+    }
+
     // Execute the query
-    const tours = await query
+    const tours = await query;
 
     res.status(200).json({
       status: 'success',
@@ -64,7 +74,7 @@ exports.getAlltours = async (req, res) => {
       },
     });
   } catch (err) {
-    console.log(err)
+    console.log(err);
     res.status(400).json({
       status: 'fail',
       message: err,
