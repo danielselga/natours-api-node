@@ -24,12 +24,12 @@ exports.getAlltours = async (req, res) => {
     //   .equals('easy'); // We can have lte(), lt()...
     
     // Bluild the query
-    // 1) Filtering
+    // 1A) Filtering
     const queryObj = {...req.query} // Creating a NEW object copy of an object (not referenced)
     const excludeFields = ['page', 'sort', 'limit', 'fields']
     excludeFields.forEach(el => delete queryObj[el])
 
-    // 2) Avanced filtering
+    // 2B) Avanced filtering
     let queryStr = JSON.stringify(queryObj)
     queryStr = queryStr.replace(/(\bgte\b|\blt\b|\bgt\b|\blte\b)/g, match => `$${match}`)
 
@@ -37,7 +37,18 @@ exports.getAlltours = async (req, res) => {
     // {difficulty: 'easy', duration: {gte: 5}}
     // gte, gt, lte, lt
     
-    const query = await Tour.find( JSON.parse(queryStr))
+    let query = Tour.find(JSON.parse(queryStr))
+    
+    // console.log(req.query.sort , 'req')
+
+    // 2) Sorting
+    if(req.query.sort) {
+      console.log('if')
+      const sortBy = req.query.sort.split(',').join(' ')
+      query = query.sort(sortBy)
+      // Sort('price ratingAverage') // To add a second or criteria add in the same string separated by space the critereas.
+    }
+     
   
     // Execute the query
     const tours = await query
