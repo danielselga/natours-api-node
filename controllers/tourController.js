@@ -78,6 +78,7 @@ exports.getAlltours = async (req, res) => {
 
     // Execute the query
     const tours = await query;
+    // query.sort().select().skip().limit()
 
     res.status(200).json({
       status: 'success',
