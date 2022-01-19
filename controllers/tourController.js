@@ -50,7 +50,7 @@ exports.getAlltours = async (req, res) => {
       query = query.sort(sortBy);
       // Sort('price ratingAverage') // To add a second or criteria add in the same string separated by space the critereas.
     } else {
-      query = query.sort('-createdAt'); // Sorting by newest frist *nuts
+      query = query.sort('-createdAt'); // Sorting by newest frist *nuts, if you put the minus in front will switch the order to desc
     }
 
     // 3) Field limiting (Send only request data)
