@@ -47,7 +47,8 @@ const tourSchema = new mongoose.Schema({
   images: [String], // Array of strings
   createdAt: {
     type: Date, // Adding date automaticaly
-    default: Date.now()
+    default: Date.now(),
+    select: false, // Dont send in any route
   },
   startDates: [Date], // Array of date
 });
