@@ -197,13 +197,21 @@ exports.getTourStats = async (req, res) => {
       },
       {
         $group: {
-          _id: null,
+          _id: { $toUpper: '$difficulty' }, // This _id is the separator if we need to send by category, in this case will return all the difficulty variants and group them.
+          numTours: { $sum: 1 },
+          numRatings: { $sum: '$ratingsQuantity' },
           avgRating: { $avg: '$ratingsAvg' }, //  Calling one average in this matching
           avgPrice: { $avg: '$price' },
           minPrice: { $min: '$price' },
           maxPrice: { $max: '$price' },
         },
       },
+      {
+        $sort: { avgPrice: 1 },
+      },
+      // {
+      //   $match: { _id: {$ne: 'EASY'} } // Matching multiple times, in this case we're excluding easy
+      // }
     ]); // Agregation pipeline
 
     console.log(stats);
@@ -221,4 +229,26 @@ exports.getTourStats = async (req, res) => {
   }
 };
 
-module.exports;
+exports.getMonthlyPlan = async (req, res) => {
+  try {
+    const year = req.params.year * 1
+    const plan = await Tour.aggregate([
+      {
+        $unwind: '$startDates'
+      }
+    ])
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        plan,
+      },
+    });
+
+  } catch (err) {
+    res.status(400).json({
+      status: 'Fail',
+      message: err,
+    });
+  }
+}
