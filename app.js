@@ -32,4 +32,16 @@ app.use((req, res, next) => {
 app.use('/api/v1/tours', tourRoutes);
 app.use('/api/v1/users', userRouter);
 
+// All the http methods (works because the last middleware check the routes and execute.)
+app.all('*', async (req, res, next) => {
+  try {
+    res.status(404).json({
+      status: 'fail',
+      message: `Can't find ${req.originalUrl}`
+    })
+  } catch (err) {
+    console.log(err)
+  }
+})
+
 module.exports = app
