@@ -54,6 +54,10 @@ const tourSchema = new mongoose.Schema(
       select: false, // Dont send in any route
     },
     startDates: [Date], // Array of date
+    secretTour: {
+      type: Boolean,
+      default: false
+    }
   },
   {
     toJSON: { virtuals: true },
@@ -65,18 +69,36 @@ tourSchema.virtual('durationWeeks').get(function () {
 });
 
 // Document Middleware: runs before .save() and .create() -> that means we can still work with the data after registered
-tourSchema.pre('save', function (next) {
-  this.slug = slugify(this.name, { lower: true });
-  next()
-});
+// tourSchema.pre('save', function (next) {
+//   this.slug = slugify(this.name, { lower: true });
+//   next()
+// });
 
-tourSchema.pre('save', function(next) {
-  console.log('Will save document...')
+// tourSchema.pre('save', function(next) {
+//   console.log('Will save document...')
+//   next()
+// })
+
+// tourSchema.post('save', function(doc, next) {
+//   console.log(doc)
+//   next()
+// })
+
+// PRE AND POST
+// PRE MEANS BEFORE THE HOOK THAT WE WILL PASS AS FRIST PARAM AND POST MEANS AFTER THE HOOK.
+
+// Query middleware
+// tourSchema.pre('find', function(next) { // pre 'find' that means this middleware runs before the find method in the query
+  tourSchema.pre(/^find/, function(next) { // Using regex to match with all the methods that start with 'find'
+  this.find({secretTour: {$ne: true}})
+
+  this.start = Date.now()
   next()
 })
 
-tourSchema.post('save', function(doc, next) {
-  console.log(doc)
+tourSchema.post(/^find/, function(docs, next) {
+  console.log(`Query took ${Date.now() - this.start} milliseconds`)
+  console.log(docs);
   next()
 })
 
