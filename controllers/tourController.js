@@ -157,6 +157,7 @@ exports.updateTour = async (req, res) => {
   try {
     const updatedTour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
+      runValidators: true // Run the model validators when updated 
     });
 
     res.status(200).json({
