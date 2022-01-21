@@ -56,8 +56,8 @@ const tourSchema = new mongoose.Schema(
     startDates: [Date], // Array of date
     secretTour: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   {
     toJSON: { virtuals: true },
@@ -68,7 +68,10 @@ tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
 });
 
+// MONGOOSE MIDDLEWARES
+
 // Document Middleware: runs before .save() and .create() -> that means we can still work with the data after registered
+
 // tourSchema.pre('save', function (next) {
 //   this.slug = slugify(this.name, { lower: true });
 //   next()
@@ -89,18 +92,27 @@ tourSchema.virtual('durationWeeks').get(function () {
 
 // Query middleware
 // tourSchema.pre('find', function(next) { // pre 'find' that means this middleware runs before the find method in the query
-  tourSchema.pre(/^find/, function(next) { // Using regex to match with all the methods that start with 'find'
-  this.find({secretTour: {$ne: true}})
+tourSchema.pre(/^find/, function (next) {
+  // Using regex to match with all the methods that start with 'find'
+  this.find({ secretTour: { $ne: true } });
 
-  this.start = Date.now()
-  next()
-})
+  this.start = Date.now();
+  next();
+});
 
-tourSchema.post(/^find/, function(docs, next) {
-  console.log(`Query took ${Date.now() - this.start} milliseconds`)
-  console.log(docs);
-  next()
-})
+tourSchema.post(/^find/, function (docs, next) {
+  console.log(`Query took ${Date.now() - this.start} milliseconds`);
+  // console.log(docs);
+  next();
+});
+
+// AGGREGATION MIDDLEWARE
+tourSchema.pre('aggregate', function (next) {
+  // Put an match to the agreggation pipeline
+  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+  console.log(this.pipeline());
+  next();
+});
 
 const Tour = mongoose.model('Tour', tourSchema);
 
