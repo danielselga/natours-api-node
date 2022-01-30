@@ -34,6 +34,7 @@ app.use('/api/v1/users', userRouter);
 
 // All the http methods (works because the last middleware check the routes and execute.)
 app.all('*', (req, res, next) => {
+  console.log(err.stack)
   //   res.status(404).json({
   //     status: 'fail',
   //     message: `Can't find ${req.originalUrl}`
