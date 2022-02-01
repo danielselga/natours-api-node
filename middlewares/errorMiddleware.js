@@ -37,8 +37,7 @@ const SendErrorProd = (err, res) => {
   } else {
     // 1) Log Error
     console.log('Error', err);
-
-    // 2) Send the generic message
+    Log
     res.status(500).json({
       status: 'error',
       messege: 'Something went very wrong!',
@@ -71,4 +70,3 @@ exports.globalErrorHandler = (err, req, res, next) => {
     SendErrorProd(error, res);
   }
 };
-  
