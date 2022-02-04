@@ -4,10 +4,11 @@ const userController = require('../controllers/usersController');
 const authController = require('../controllers/authController');
 
 // Especial endpoints
-
 router.post('/signup', authController.signup);
-
 router.post('/login', authController.login);
+
+router.post('/forgotPassword', authController.forgotPassword);
+// router.post('/resetPassword', authController.resetPassword);
 
 router
   .route('/')
