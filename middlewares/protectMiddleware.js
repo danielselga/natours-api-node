@@ -43,3 +43,14 @@ exports.protect = catchAsync(async (req, res, next) => {
   req.user = currentUser // Req able us to pass data from middle wares
   next();
 }); 
+
+exports.restrictTo = (...roles) => {
+  return (req, res, next) => {
+    // Role is an array ['admin', 'lead-guide']
+    if (!roles.includes(req.user.roles)) {
+      return next(new AppError('You do not have permition to perform this action', 403))
+    }
+
+    next()
+  }
+}
