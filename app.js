@@ -28,6 +28,7 @@ app.use((req, res, next) => {
   // Will apply to all req
   req.requestTime = new Date().toISOString();
   console.log(req.requestTime)
+  console.log(req.headers)
   next(); // Next needed to be caled in the end of the midleware
 });
 
