@@ -1,4 +1,4 @@
-const AppError = require("../utils/appError");
+const AppError = require('../middlewares/errorMiddleware');
 
 const handleCastErrDB = err => {
   const message = `Invalid ${err.path}: ${err.value}`
