@@ -28,16 +28,18 @@ exports.protect = catchAsync(async (req, res, next) => {
   
   // 3) Check if user still exists
   
-  const freshUser = await User.findById(decoded.id)
+  const currentUser = await User.findById(decoded.id)
 
-  if (!freshUser) {
+  if (!currentUser) {
     return next(new AppError('The user belonging to this token does no longer exist!', 401))
   }
   
   // 4) Check if user changed password after the jwt was issued
-  if (freshUser.changePasswordAfter(decoded.iat)) {
+  if (currentUser.changePasswordAfter(decoded.iat)) {
     return next(new AppError('User recently change password, Please login again!'))
   }
 
+  // GRANT ACCESS TO PROTECTED NAME
+  req.user = currentUser // Req able us to pass data from middle wares
   next();
 }); 
