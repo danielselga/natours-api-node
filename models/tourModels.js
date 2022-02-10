@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
-const validator = require('validator');
+// const validator = require('validator');
+// const User = require('./userModel');
 
 const tourSchema = new mongoose.Schema(
   {
@@ -17,7 +18,7 @@ const tourSchema = new mongoose.Schema(
         10,
         'A touor name must have greater or equal than 10 characters.',
       ],
-      validate: [validator.isAlpha, 'Tour name must only contains characters'],
+      // validate: [validator.isAlpha, 'Tour name must only contains characters'],
     },
     slug: String,
     duration: {
@@ -85,9 +86,40 @@ const tourSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    startLocation: {
+      // GeoJSON
+      type: {
+        type: String,
+        default: 'Point',
+        enum: ['Point'],
+      },
+      coordinates: [Number],
+      address: String,
+      description: String,
+    },
+    locations: [
+      {
+        type: {
+          type: String,
+          default: 'Point',
+          enum: 'Point',
+        },
+        coordinates: [Number],
+        address: String,
+        description: String,
+        day: Number,
+      },
+    ],
+    guides: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User'
+      },
+    ],
   },
   {
     toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   }
 );
 
@@ -99,10 +131,16 @@ tourSchema.virtual('durationWeeks').get(function () {
 
 // Document Middleware: runs before .save() and .create() -> that means we can still work with the data after registered
 
-// tourSchema.pre('save', function (next) {
-//   this.slug = slugify(this.name, { lower: true });
+tourSchema.pre('save', function (next) {
+  this.slug = slugify(this.name, { lower: true });
+  next();
+});
+
+// tourSchema.pre('save', async function(next) {
+//   const guidesPromises = this.guides.map(async el => await User.findById(el))
+//   this.guides = await Promise.all(guidesPromises) // Resolving the promise.
 //   next()
-// });
+// })
 
 // tourSchema.pre('save', function(next) {
 //   console.log('Will save document...')
