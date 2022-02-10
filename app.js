@@ -1,18 +1,26 @@
 const express = require('express');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit')
+const helmet = require('helmet')
+const mongoSanitize = require('express-mongo-sanitize')
+const xss = require('xss-clean')
+const hpp = require('hpp')
 const userRouter = require('./routes/userRoutes');
 const tourRoutes = require('./routes/tourRoutes');
 const app = express();
 const appError = require('./utils/appError');
 const errorMidleware = require('./middlewares/errorMiddleware')
 
-// Morgan only on with enviroment variable
+// Morgan only on with enviroment variable, Development Log
 if(process.env.NODE_ENV === 'development') {
   console.log('Morgan on')
   app.use(morgan('dev'));
 }
 
+// Set security http headers
+app.use(helmet())
+
+// Limit requests from same API
 const limiter = rateLimit({
   max: 100,
   windowMs: 60 * 60 * 1000,
@@ -20,11 +28,25 @@ const limiter = rateLimit({
 })
 app.use('/api', limiter)
 
-// Middlewares to Parsing the requisitions body
-app.use(express.json()); // Extreme important to post and patch methods
 
+// Middlewares to Parsing the requisitions body
+app.use(express.json({limit: '10kb'})); // Extreme important to post and patch methods
+
+// Data sanitization against NoSql query injection
+app.use(mongoSanitize())
+
+// Data sanitization agains XXS
+app.use(xss())
+
+// Prevent parametrer polution
+app.use(hpp({
+  whitelist: ['duration', 'ratingsQuantity', 'ratingsAverage', 'maxGroupSize', 'difficulty', 'price']
+}))
+
+// Serving static files
 app.use(express.static(`${__dirname}/public`))
 
+// Test middleware
 app.use((req, res, next) => {
   // Will apply to all req
   console.log('Hello from the middleware');
