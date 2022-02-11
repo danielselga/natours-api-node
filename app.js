@@ -7,9 +7,11 @@ const xss = require('xss-clean')
 const hpp = require('hpp')
 const userRouter = require('./routes/userRoutes');
 const tourRoutes = require('./routes/tourRoutes');
+const reviewRoutes = require('./routes/reviewRoutes');
 const app = express();
 const appError = require('./utils/appError');
 const errorMidleware = require('./middlewares/errorMiddleware')
+
 
 // Morgan only on with enviroment variable, Development Log
 if(process.env.NODE_ENV === 'development') {
@@ -64,6 +66,7 @@ app.use((req, res, next) => {
 // Using the routers
 app.use('/api/v1/tours', tourRoutes);
 app.use('/api/v1/users', userRouter);
+app.use('/api/v1/reviews', reviewRoutes)
 
 // All the http methods (works because the last middleware check the routes and execute.)
 app.all('*', (req, res, next) => {
