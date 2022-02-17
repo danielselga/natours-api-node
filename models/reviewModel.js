@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Tour = require('../models/tourModels')
 
 const reviewSchema = new mongoose.Schema(
   {
@@ -6,7 +7,7 @@ const reviewSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Review can not be empty!'],
     },
-    ratings: {
+    rating: {
       type: Number,
       min: 1,
       max: 5,
@@ -32,7 +33,7 @@ const reviewSchema = new mongoose.Schema(
   }
 );
 
-reviewSchema.pre(/^find/, function(next) {
+reviewSchema.pre(/^find/, function (next) {
   // this.populate({
   //   path: 'tour',
   //   select: 'name'
@@ -42,7 +43,35 @@ reviewSchema.pre(/^find/, function(next) {
 
   this.populate({
     path: 'user',
+    select: 'name photo',
+  });
+  next();
+});
+
+reviewSchema.statics.calcAverageRatings = async function (tourId) {
+  const stats = await this.aggregate([
+    {
+      $match: { tour: tourId },
+    },
+    {
+      $group: {
+        _id: '$tour',
+        nRatings: { $sum: 1 },
+        avgRating: { $avg: '$rating' },
+      },
+    },
+  ]);
+
+  await Tour.findByIdAndUpdate(tourId, {
+    ratingsQuantity: stats[0].nRatings,
+    ratingsAverage: stats[0].avgRating
   })
+};
+
+reviewSchema.post('save', function(next){
+  // This points to the current review
+
+  this.constructor.calcAverageRatings(this.tour);
   next()
 })
 
