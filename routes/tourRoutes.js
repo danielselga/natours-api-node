@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router(); // Router class from express used to organize the routes middlewares
 const tourController = require('../controllers/tourController');
 const protectMiddleware = require('../middlewares/protectMiddleware');
-const reviewRouter = require('../routes/reviewRoutes')
+const reviewRouter = require('../routes/reviewRoutes');
 
 // POST /tour/234fad4/reviews
 // GET /tour/234fad4/reviews
@@ -11,7 +11,6 @@ const reviewRouter = require('../routes/reviewRoutes')
 // router
 //   .route('/:tourId/reviews')
 //   .post(protectMiddleware.restrictTo('user'), reviewController.createReview);
-
 
 router
   .use(protectMiddleware.protect)
@@ -29,22 +28,28 @@ router
   .get(tourController.getMonthlyPlan);
 
 router
-  .use(protectMiddleware.protect)
   .route('/')
   .get(tourController.getAlltours)
-  .post(tourController.createTour);
+  .post(
+    protectMiddleware.protect,
+    protectMiddleware.restrictTo('admin', 'lead-guide'),
+    tourController.createTour
+  );
 
 router
   .route('/:id')
   .get(tourController.getTour)
-  .patch(tourController.updateTour)
+  .patch(
+    protectMiddleware.protect,
+    protectMiddleware.restrictTo('admin', 'lead-guide'),
+    tourController.updateTour
+  )
   .delete(
     protectMiddleware.protect,
     protectMiddleware.restrictTo('admin', 'lead-guide'),
     tourController.deleteTour
   );
 
-router.use('/:tourId/reviews', reviewRouter)
-
+router.use('/:tourId/reviews', reviewRouter);
 
 module.exports = router;
