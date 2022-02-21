@@ -2,6 +2,7 @@ const Tour = require('../models/tourModels');
 const catchAsync = require('../utils/catchAsync');
 const factory = require('../controllers/handlerFactory');
 const APIFeatures = require('../utils/apiFeatures');
+const AppError = require('../middlewares/errorMiddleware');
 
 // JSON File
 // exports.tours = JSON.parse(
@@ -199,3 +200,12 @@ exports.getMonthlyPlan = catchAsync(async (req, res, next) => {
     },
   });
 });
+
+exports.getToursWithin = (req, res, next) => {
+  const { distance, center, unit } = req.params
+  const [lat, lng] = latlng.split(',')
+
+  if (!lat || !lng) {
+    next(new AppError('Please provide latitude and longitude in the format lat, lng'))
+  }
+}

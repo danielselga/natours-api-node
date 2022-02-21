@@ -89,13 +89,13 @@ reviewSchema.post('save', function(next){
   next()
 })
 
-reviewSchema.pre(/^findOneAnd/, function(next) {
-  this.r = await this.findOne()
-  next()
+reviewSchema.pre(/^findOneAnd/, async function(next) {
+    this.r = this.findOne()
+    next()
 })
 
 reviewSchema.post(/^findOneAnd/, function(next) {
-  await this.r.constructor.calcAverageRatings(this.r.tour)
+  this.r.constructor.calcAverageRatings(this.r.tour)
 })
 
 const Review = mongoose.model('Review', reviewSchema);
