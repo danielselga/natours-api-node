@@ -1,3 +1,4 @@
+const path = require('path')
 const express = require('express');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit')
@@ -8,7 +9,15 @@ const hpp = require('hpp')
 const userRouter = require('./routes/userRoutes');
 const tourRoutes = require('./routes/tourRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
+
 const app = express();
+
+app.set('view engine', 'pug')
+app.set('views', path.join(__dirname, 'views'))
+
+// Serving static files
+app.use(express.static(path.join(__dirname, 'public')))
+
 const appError = require('./utils/appError');
 const errorMidleware = require('./middlewares/errorMiddleware')
 
@@ -45,8 +54,7 @@ app.use(hpp({
   whitelist: ['duration', 'ratingsQuantity', 'ratingsAverage', 'maxGroupSize', 'difficulty', 'price']
 }))
 
-// Serving static files
-app.use(express.static(`${__dirname}/public`))
+
 
 // Test middleware
 app.use((req, res, next) => {
@@ -64,6 +72,10 @@ app.use((req, res, next) => {
 });
 
 // Using the routers
+app.get('/', (req, res) => {
+  res.status(200).render('base')
+})
+
 app.use('/api/v1/tours', tourRoutes);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRoutes)
