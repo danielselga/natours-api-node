@@ -10,8 +10,17 @@ const userRouter = require('./routes/userRoutes');
 const tourRoutes = require('./routes/tourRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
 const viewRoutes = require('./routes/viewRoutes');
+const cors = require('cors')
 
 const app = express();
+
+const corsOptions = {
+  origin: "*",
+  credentials: true,
+  optionSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
 
 app.set('view engine', 'pug')
 app.set('views', path.join(__dirname, 'views'))
